@@ -149,40 +149,6 @@ def parse_dataframe(obj):
 
 
 
-"""
-
-def check_point(obj, order_side ):
-
-
-	## this finds out the average of the  last five values in the dataframe for the close price 
-	avg_last_five = sum(list(obj.df['close'][-5:]))/5
-
-	print (f"BUY->{obj.buy_lst}")
-	print (f"SELL->{obj.sell_lst}")
-
-	# if the order side was SELL then the next SELL price must be bigger than the last recorded SELL price by N%
-	if order_side == "SELL" and obj.sell_lst :
-		#print (">>SELL",obj.sell_lst[-1] , avg_last_five + (avg_last_five * 0.02))
-		if max(obj.sell_lst) > avg_last_five - (avg_last_five * 0.02) :
-			return True
-		else:
-			return False
-
-
-	# if the order side was BUY then the next BUY pruce must be lower than the last recorded BUY price by N%	
-	elif order_side == "BUY" and obj.buy_lst:
-		#print (">>BUY",obj.buy_lst[-1] , avg_last_five - (avg_last_five *0.02))
-		if min(obj.buy_lst) < avg_last_five + (avg_last_five *0.02) : 
- 			return True
-		else:
-			return False
-
-	else:
-		return False
-
-	
-"""
-
 
 def check_point(obj , order_side ):
 
@@ -254,38 +220,3 @@ def order_span(obj ):
 	MIN_BUY = min(obj.buy_lst)
 
 	return MAX_SELL/MIN_SELL ,  MAX_BUY/MIN_BUY
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#clear_screen()
