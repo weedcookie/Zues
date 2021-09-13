@@ -9,6 +9,16 @@
   <li>datetime<p> To keep track of order dates and program execution times </p></li>
 </ul>
 
+<h3>To run the program </h3>
+```
+python3 core.py 
+```
+<p>It will show the banner once then wait for the time defined by the user</p>
+
+<p>the database file is called ```order_books.db```</p>
+
+
+
 <p>The bot is early development state and is not ready for real market trading </p>
 <p>The program is for testing purposes use at your own risk </p>
 
