@@ -29,7 +29,7 @@ def clear_screen():
 	"""
 	try:
 
-		if platform.system() == 'nt':
+		if os.name == 'nt':
 			os.system('cls')
 		else:
 			os.system('clear')
