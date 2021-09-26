@@ -63,35 +63,77 @@ def intro(obj):
 	response = parse_dataframe(obj  )
 
 
+## checking for older trades not closed 
+	# in case of real trading change test to False
+	buys = all_buys(symbol=obj.coin , order_type="LIMIT" , test=True)
+	sells = all_sells(symbol=obj.coin , order_type="LIMIT" , test=True)
 
 	state = check_point(obj ,response)
 
 	## create a test order and records the price for that trade 
+
+
 
 	if response == "SELL" and state == True:
 		obj.test_order(order_side="SELL" , order_type="LIMIT")
 	elif response == "BUY" and state == True:
 		obj.test_order(order_side="BUY" , order_type="LIMIT")
 
+	
+
+
+
+	puts(colored.yellow(f"Buys : [{len(buys)}]   Sells : [{len(sells)}]"))
+
+
+
+	trades , plst = prof_filter(buys , sells)
+
+
+
+
 	if obj.sell_lst:
 		SELL_RATIO = sell_ratio(obj)
-		if SELL_RATIO > 1.03 and response == "SELL":
+
+		# check for older buy orders 
+
+
+		## if the ratio between the max and min values is bigger than 1.05 then create a trade
+		if SELL_RATIO > 1.02 and response == "SELL" and float(obj.get_coin_price()) > float(max(plst)):
+
 			puts(colored.red(F"THIS IS A SELL TRADE ......................... {obj.get_coin_price()} "))
-	
+			
+
+			obj.sell_lst.clear()
+
+			# send unique email to user 
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 	if obj.buy_lst:
 		BUY_RATIO = buy_ratio(obj)
-		if BUY_RATIO > 1.3 and response == "BUY":
+		# chek for older sell orders		
+
+
+
+		## if the ratio between the max and min values is bigger than 1.05 then create a trade
+		if BUY_RATIO > 1.02 and response == "BUY" and float(obj.get_coin_price()) < float(min(plst)) :
 			puts(colored.green(F"THIS IS A BUY TRADE .......................... {obj.get_coin_price()}"))
+
+	
+			
+
+			obj.buy_lst.clear()
+			# send unique email to user 
+	
+
+
+
+	# checking all trades of buy and sell with order_type set to LIMIT for limit orders and MARKET for market orders
+	
 	
 
 	
-
-
-
-
-
-
-
 
 	#puts(colored.cyan("Moving to the next coinpair "))
 	puts(colored.cyan("______________________________________________________________"))
