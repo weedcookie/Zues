@@ -20,6 +20,11 @@ import pandas as pd
 import numpy as np 
 
 
+from models import db 
+from models import Live_Order 
+from models import Test_Order
+
+
 
 
 
@@ -150,6 +155,7 @@ def parse_dataframe(obj):
 
 
 
+
 def check_point(obj , order_side ):
 
 	print (f"BUY->{obj.buy_lst}")
@@ -159,7 +165,7 @@ def check_point(obj , order_side ):
 	if order_side == "SELL" and not obj.sell_lst:
 		return True
 	elif order_side == "SELL" and obj.sell_lst :
-		if ( obj.get_coin_price() / max(obj.sell_lst) ) >  1.004 :
+		if ( obj.get_coin_price() / max(obj.sell_lst) ) >  1.002 :
 
 			return True
 		else:
@@ -169,7 +175,7 @@ def check_point(obj , order_side ):
 	if order_side == "BUY" and not obj.buy_lst:
 		return True
 	elif order_side == "BUY" and obj.buy_lst:
-		if (min(obj.buy_lst) / obj.get_coin_price()) > 1.004:
+		if (min(obj.buy_lst) / obj.get_coin_price()) > 1.002:
 			return True
 		else:
 			return False
@@ -220,3 +226,111 @@ def order_span(obj ):
 	MIN_BUY = min(obj.buy_lst)
 
 	return MAX_SELL/MIN_SELL ,  MAX_BUY/MIN_BUY
+
+
+
+
+
+
+
+def all_trades(lst):
+	buys = []
+	sells = [] 
+	buy_shares = 0 
+	sell_shares = 0 
+
+
+	for item in lst:
+		if item.order_side == "BUY":
+			buys.append(item)
+			buy_shares += float(item.amt)
+
+		elif item.order_side == "SELL":
+			sell_shares += float(item.amt)
+			sells.append(item)
+
+
+	
+	return buys , sells , [ buy_shares , sell_shares]
+
+
+
+def all_buys(symbol, order_type , test):
+
+	if test == True:
+		all_buys = Test_Order.query.filter_by(symbol=symbol , order_type=order_type, order_side="BUY").all()
+	elif test == False:
+		all_buys = Live_Order.query.filter_by(symbol=symbol , order_type=order_type, order_side="BUY").all()	
+
+	return all_buys
+
+
+def all_sells(symbol , order_type , test):
+
+	if test == True:
+
+		all_sells = Test_Order.query.filter_by(symbol=symbol , order_type=order_type , order_side="SELL").all()
+	elif test == False:
+		all_sells = Live_Order.query.filter_by(symbol=symbol , order_type=order_type , order_side="SELL").all()
+
+	return all_sells
+
+
+
+def prof_filter(buy_lst , sell_lst):
+	if len(buy_lst) > len(sell_lst) :
+		k = len(sell_lst)
+		
+	
+	elif len(sell_lst) > len(buy_lst) :
+		k = len(buy_lst)
+	
+	else:
+		k=0
+	
+
+
+	cash = 0 
+
+	
+	for buy in  buy_lst[:k]:
+		cash -= float(buy.amt) * float(buy.price)
+		#del buy_lst[buy_lst.index(buy)]
+
+	for sell in sell_lst[:k]:
+		cash += float(sell.amt) * float(sell.price)
+		#del sell_lst[sell_lst.index(sell)]
+
+	
+
+	print (f"Total profit : {cash}")
+	print (f"Left trades ---> BUYS :[{len(buy_lst[k:])}] SELLS :[{len(sell_lst[k:])}]")
+
+
+	tmp = [] 
+
+	if len(buy_lst[k:]) > len(sell_lst[k:]) :
+		for item in buy_lst[k:] :
+			tmp.append(item)
+
+		z = "BUY" 
+
+	elif len(buy_lst[k:]) < len(sell_lst[k:]) :
+		for item in sell_lst[k:] :
+			tmp.append(item)		
+		z = "SELL"
+
+	# price lst 
+	plst = [ item.price for item in tmp ]
+
+	if len(plst) != 0:
+		print (f" Max {max(plst)} : Min {min(plst)}")
+
+	return tmp, plst
+
+
+
+
+
+
+#clear_screen()
