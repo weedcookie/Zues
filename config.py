@@ -8,7 +8,7 @@ sec = ""
 
 
 # coinpairs to trade on the binance platform
-portfolio = ['BNBBUSD', 'BTCBUSD','BTCRUB','BNBBTC','BNBETH'] 
+portfolio = [ 'BTCBUSD','BTCRUB','BNBBUSD','BNBBTC','BNBETH'] 
 
 # gmail creds to send order info via email
 usr = ""
