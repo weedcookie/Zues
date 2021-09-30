@@ -65,8 +65,8 @@ def intro(obj):
 
 ## checking for older trades not closed 
 	# in case of real trading change test to False
-	buys = all_buys(symbol=obj.coin , order_type="LIMIT" , test=True)
-	sells = all_sells(symbol=obj.coin , order_type="LIMIT" , test=True)
+	buys = all_buys(symbol=obj.coin , order_type="MARKET"  ,test=False)
+	sells = all_sells(symbol=obj.coin , order_type="MARKET" , test=False)
 
 	state = check_point(obj ,response)
 
@@ -99,14 +99,15 @@ def intro(obj):
 
 
 		## if the ratio between the max and min values is bigger than 1.05 then create a trade
-		if SELL_RATIO > 1.02 and response == "SELL" and float(obj.get_coin_price()) > float(max(plst)):
+		if SELL_RATIO > 1.02 and response == "SELL" :
 
-			puts(colored.red(F"THIS IS A SELL TRADE ......................... {obj.get_coin_price()} "))
-			
-
-			obj.sell_lst.clear()
-
-			# send unique email to user 
+			if len(plst) != 0 :
+				if float(obj.get_coin_price()) > float(max(plst)) :
+					puts(colored.red(F"THIS IS A SELL TRADE ......................... {obj.get_coin_price()} "))
+					result = obj.market_SELL(amt=0.0001)
+					print (result)
+					obj.sell_lst.clear()
+					# send unique email to user 
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -117,14 +118,15 @@ def intro(obj):
 
 
 		## if the ratio between the max and min values is bigger than 1.05 then create a trade
-		if BUY_RATIO > 1.02 and response == "BUY" and float(obj.get_coin_price()) < float(min(plst)) :
-			puts(colored.green(F"THIS IS A BUY TRADE .......................... {obj.get_coin_price()}"))
-
-	
+		if BUY_RATIO > 1.02 and response == "BUY":
 			
-
-			obj.buy_lst.clear()
-			# send unique email to user 
+			if len(plst) != 0 :
+				if float(obj.get_coin_price()) < float(min(plst)):
+					puts(colored.green(F"THIS IS A BUY TRADE .......................... {obj.get_coin_price()}"))		
+					result = obj.market_BUY(amt=0.0001)
+					print (result)
+					obj.buy_lst.clear()
+					# send unique email to user 
 	
 
 
