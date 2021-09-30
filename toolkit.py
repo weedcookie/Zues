@@ -286,13 +286,9 @@ def prof_filter(buy_lst , sell_lst):
 		k = len(buy_lst)
 	
 	else:
-		k=0
+		k = len(buy_lst) or len(sell_lst)
 	
-
-
 	cash = 0 
-
-	
 	for buy in  buy_lst[:k]:
 		cash -= float(buy.amt) * float(buy.price)
 		#del buy_lst[buy_lst.index(buy)]
@@ -302,9 +298,9 @@ def prof_filter(buy_lst , sell_lst):
 		#del sell_lst[sell_lst.index(sell)]
 
 	
+	puts(colored.yellow(f"Total profit : {cash}"))
 
-	print (f"Total profit : {cash}")
-	print (f"Left trades ---> BUYS :[{len(buy_lst[k:])}] SELLS :[{len(sell_lst[k:])}]")
+	puts(colored.yellow(f"Left trades ---> BUYS :[{len(buy_lst[k:])}] SELLS :[{len(sell_lst[k:])}]"))
 
 
 	tmp = [] 
