@@ -89,7 +89,8 @@ def intro(obj):
 
 	trades , plst = prof_filter(buys , sells)
 
-
+	if not plst  :
+		plst.append(obj.get_coin_price())
 
 
 	if obj.sell_lst:
@@ -101,13 +102,14 @@ def intro(obj):
 		## if the ratio between the max and min values is bigger than 1.05 then create a trade
 		if SELL_RATIO > 1.02 and response == "SELL" :
 
-			if len(plst) != 0 :
-				if float(obj.get_coin_price()) > float(max(plst)) :
-					puts(colored.red(F"THIS IS A SELL TRADE ......................... {obj.get_coin_price()} "))
-					result = obj.market_SELL(amt=0.0001)
+			if float(obj.get_coin_price()) > float(max(plst))  :
+				puts(colored.red(F"THIS IS A SELL TRADE ......................... {obj.get_coin_price()} "))
+				result = obj.market_SELL(amt=0.0001)
+				if result != None:
+
 					print (result)
 					obj.sell_lst.clear()
-					# send unique email to user 
+				# send unique email to user 
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -120,13 +122,13 @@ def intro(obj):
 		## if the ratio between the max and min values is bigger than 1.05 then create a trade
 		if BUY_RATIO > 1.02 and response == "BUY":
 			
-			if len(plst) != 0 :
-				if float(obj.get_coin_price()) < float(min(plst)):
-					puts(colored.green(F"THIS IS A BUY TRADE .......................... {obj.get_coin_price()}"))		
-					result = obj.market_BUY(amt=0.0001)
+			if float(obj.get_coin_price()) < float(min(plst)) :
+				puts(colored.green(F"THIS IS A BUY TRADE .......................... {obj.get_coin_price()}"))		
+				result = obj.market_BUY(amt=0.0001)
+				if result != 0:
 					print (result)
 					obj.buy_lst.clear()
-					# send unique email to user 
+				# send unique email to user 
 	
 
 
@@ -167,14 +169,15 @@ if __name__ == "__main__":
 	clear_screen()
 	puts(colored.cyan(config.banner))
 
-	ini_time_for_now = datetime.now()
+	start_time = datetime.utcnow()
+	ini_time_for_now = datetime.utcnow()
 	print ("initial_date", str(ini_time_for_now))
 	while True :
 		
 	
 		next_checkpoint = ini_time_for_now + timedelta(seconds=30)
 
-		if datetime.now().timestamp() > next_checkpoint.timestamp():
+		if datetime.utcnow().timestamp() > next_checkpoint.timestamp():
 
 			try:
 				clear_screen()
@@ -182,12 +185,13 @@ if __name__ == "__main__":
 				
 					
 						intro(item)
-					 
+
 					
 					
 				n += 1
 				print ("\n")
 				print (f"Iteration number [{n}] ")
+				print (f"StratTime : {start_time}  UpTime : {( datetime.utcnow().timestamp() -  ini_time_for_now.timestamp() )} ")
 
 			except requests.exceptions.Timeout as Time_out  :
 				print (f"Time out encountered\n {Time_out}")
@@ -195,7 +199,10 @@ if __name__ == "__main__":
 			except requests.exceptions.ConnectionError as binance_error_2:
 				print (binance_error_2)
 				time.sleep(120)
+			except BinanceAPIException as e:
+				print (e)
+
 			
-			ini_time_for_now = datetime.now()
+			ini_time_for_now = datetime.utcnow()
 			print ("initial_date", str(ini_time_for_now))
 			
