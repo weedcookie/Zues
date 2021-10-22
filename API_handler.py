@@ -2,7 +2,7 @@
 
 
 import random
-
+import uuid
 
 from collections import deque
 from datetime import datetime , timedelta
@@ -318,18 +318,34 @@ class fetch_coin:
 		''' the bot executes a BUY with the market price at that moment '''
        
 		try:
-			buy_order = client.create_order(symbol=self.coin ,type="MARKET" , quantity=str(amt), side="BUY" )
+			BUY_order = client.create_order(symbol=self.coin ,type="MARKET" , quantity=str(amt), side="BUY" )
 			
-			trade_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(buy_order['transactTime']/1000)))
-			send_order_info(SYMBOL_=str(self.coin) , TYPE_="BUY" , AMT_=float(amt) , PRICE_=str(buy_order['fills'][0]['price'])  , PRED_PRICE=PRED_PRICE)
+			trade_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(BUY_order['transactTime']/1000)))
+			
+			send_order_info(SYMBOL_=str(self.coin),\
+				TYPE_="BUY",\
+				AMT_=float(amt),\
+				PRICE_=str(BUY_order['fills'][0]['price']))
 
-			td = {"date_time":str(trade_time),\
+			td = {"date_time":datetime.utcnow(),\
 			"symbol":str(self.coin),\
 			"order_side":"BUY",\
 			"order_type":"MARKET",\
 			"quantity":amt,\
-			"price":float(buy_order['fills'][0]['price']),\
-			"fee":float(buy_order['fills'][0]['commission'])}
+			"price":float(BUY_order['fills'][0]['price']),\
+			"fee":float(BUY_order['fills'][0]['commission'])}
+
+			add_order = Live_Order(dt=td["date_time"],\
+								   symbol=td["symbol"],\
+								   order_side=td["order_side"],\
+								   order_type=td["order_type"],\
+								   amt=td["quantity"],\
+								   price=td["price"],\
+								   fee=td["fee"],\
+								   order_id=str(uuid.uuid4()))
+			db.session.add(add_order)
+			db.session.commit()
+
 			return td
             
 		except BinanceAPIException as e:
@@ -347,18 +363,32 @@ class fetch_coin:
 		''' the bot executes a SELL with the market price at that moment '''
        
 		try:
-			buy_order = client.create_order(symbol=self.coin ,type="MARKET" , quantity=str(amt), side="SELL" )
+			SELL_order = client.create_order(symbol=self.coin ,type="MARKET" , quantity=str(amt), side="SELL" )
 			
-			trade_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(buy_order['transactTime']/1000)))
-			send_order_info(SYMBOL_=str(self.coin) , TYPE_="SELL" , AMT_=float(amt) , PRICE_=str(buy_order['fills'][0]['price'])  , PRED_PRICE=PRED_PRICE)
+			trade_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(SELL_order['transactTime']/1000)))
+			send_order_info(SYMBOL_=str(self.coin),\
+							TYPE_="SELL",\
+							AMT_=float(amt),\
+							PRICE_=str(SELL_order['fills'][0]['price']))
 
-			td = {"date_time":str(trade_time),\
+			td = {"date_time":datetime.utcnow(),\
 			"symbol":str(self.coin),\
 			"order_side":"SELL",\
 			"order_type":"MARKET",\
 			"quantity":amt,\
-			"price":float(buy_order['fills'][0]['price']),\
-			"fee":float(buy_order['fills'][0]['commission'])}
+			"price":float(SELL_order['fills'][0]['price']),\
+			"fee":float(SELL_order['fills'][0]['commission'])}
+
+			add_order = Live_Order(dt=td["date_time"],\
+								   symbol=td["symbol"],\
+								   order_side=td["order_side"],\
+								   order_type=td["order_type"],\
+								   amt=td["quantity"],\
+								   price=td["price"],\
+								   fee=td["fee"],\
+								   order_id=str(uuid.uuid4()))
+			db.session.add(add_order)
+			db.session.commit()
 			return td
             
 		except BinanceAPIException as e:
@@ -376,10 +406,21 @@ class fetch_coin:
 
 
 
+#try:
+#obj = fetch_coin("BTCRUB")
+#obj.market_SELL(amt=0.0001)
+#obj.market_BUY(amt=0.0001)
+#except:
+#	print ("Error")
 
 
+#from toolkit import all_sells, all_buys 
+
+#lst = all_sells("BTCRUB", "MARKET", test=False)
+#lst2 = all_buys("BTCRUB", "MARKET", test=False)
 
 
+#print (len(lst2) , len(lst))
 
 
 
