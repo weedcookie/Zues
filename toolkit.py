@@ -1,4 +1,4 @@
-## this is the toolkit file 
+ ## this is the toolkit file 
 
 
 
@@ -23,6 +23,9 @@ import numpy as np
 from models import db 
 from models import Live_Order 
 from models import Test_Order
+
+
+from mail_order_info import * 
 
 
 
@@ -289,17 +292,20 @@ def prof_filter(buy_lst , sell_lst):
 		k = len(buy_lst) or len(sell_lst)
 	
 	cash = 0 
+	fee = 0 
 	for buy in  buy_lst[:k]:
 		cash -= float(buy.amt) * float(buy.price)
+		fee += float(buy.fee)
 		#del buy_lst[buy_lst.index(buy)]
 
 	for sell in sell_lst[:k]:
 		cash += float(sell.amt) * float(sell.price)
+		fee += float(sell.fee)
 		#del sell_lst[sell_lst.index(sell)]
 
 	
 	puts(colored.yellow(f"Total profit : {cash}"))
-
+	puts(colored.yellow(f"Total fees : {fee}"))
 	puts(colored.yellow(f"Left trades ---> BUYS :[{len(buy_lst[k:])}] SELLS :[{len(sell_lst[k:])}]"))
 
 
@@ -321,6 +327,8 @@ def prof_filter(buy_lst , sell_lst):
 
 	if len(plst) != 0:
 		print (f" Max {max(plst)} : Min {min(plst)}")
+
+	#send_profit_info()
 
 	return tmp, plst
 
