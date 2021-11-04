@@ -16,7 +16,7 @@ from config import usr , passwrd
 
 
 
-def send_order_info(SYMBOL_ , TYPE_ , AMT_ ,PRICE_ , PRED_PRICE):
+def send_order_info(SYMBOL_ , TYPE_ , AMT_ ,PRICE_ ):
 
     
 
@@ -40,13 +40,10 @@ def send_order_info(SYMBOL_ , TYPE_ , AMT_ ,PRICE_ , PRED_PRICE):
     <body>
         <p>{}<br>
         Order with amount : {} and market price : {} <br>
-
-        <br>Predicted price : {} <br>
-
         </p>
     </body>
     </html>
-    """.format(TYPE_ , AMT_ , PRICE_ ,PRED_PRICE)
+    """.format(TYPE_ , AMT_ , PRICE_ )
 
 # Turn these into plain/html MIMEText objects
     part1 = MIMEText(text, "plain")
