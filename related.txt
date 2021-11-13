@@ -1,0 +1,6 @@
+clint
+python-binance
+matplotlib
+pandas
+flask
+flask_sqlalchemy
